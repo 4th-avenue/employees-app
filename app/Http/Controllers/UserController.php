@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Tables\Users;
 use Illuminate\Http\Request;
+use ProtoneMedia\Splade\Facades\Splade;
 use App\Http\Requests\UserUpdateRequest;
 
 class UserController extends Controller
@@ -57,6 +58,7 @@ class UserController extends Controller
     public function update(UserUpdateRequest $request, User $user)
     {
         $user->update($request->validated());
+        Splade::toast('User 정보를 수정했습니다.')->autoDismiss(3);
 
         return redirect()->route('admin.users.index');
     }
