@@ -11,7 +11,10 @@
                     </div>
                     <x-splade-table :for="$users">
                         @cell('action', $user)
-                        <Link href="{{ route('admin.users.edit', $user->id) }}" class="px-3 py-2 text-white bg-green-400 hover:bg-green-600 rounded-md">Edit</Link>
+                        <div class="space-x-2">
+                            <Link href="{{ route('admin.users.edit', $user->id) }}" class="text-green-400 hover:text-green-600 font-semibold">Edit</Link>
+                            <Link confirm="이 사용자를 삭제하시겠습니까?" confirm-text="Are you sure?" confirm-button="Yes" cancel-button="No" href="{{ route('admin.users.destroy', $user->id) }}" method="DELETE" class="text-red-400 hover:text-red-600 font-semibold">Delete</Link>
+                        </div>
                         @endcell
                     </x-splade-table>
                 </div>

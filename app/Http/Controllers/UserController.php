@@ -62,8 +62,11 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(User $user)
     {
-        //
+        $user->delete();
+        Splade::toast('User 정보를 삭제했습니다.')->autoDismiss(3);
+
+        return redirect()->back();
     }
 }
