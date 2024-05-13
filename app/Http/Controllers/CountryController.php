@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Country;
 use App\Tables\Countries;
 use Illuminate\Http\Request;
+use ProtoneMedia\Splade\SpladeForm;
 use ProtoneMedia\Splade\Facades\Splade;
 use App\Http\Requests\CountryStoreRequest;
+use ProtoneMedia\Splade\FormBuilder\Input;
+use ProtoneMedia\Splade\FormBuilder\Submit;
 
 class CountryController extends Controller
 {
@@ -40,27 +43,36 @@ class CountryController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Country $country)
     {
-        //
+        $form = SpladeForm::make()
+            ->action(route('admin.countries.update', $country))
+            ->fields([
+                Input::make('name')->label('Name'),
+                Input::make('country_code')->label('Country code'),
+                Submit::make()->label('Update'),
+            ])
+            ->fill($country)
+            ->class('space-y-4')
+            ->method('PUT');
+
+        return view('admin.countries.edit', [
+            'form' => $form,
+            'country' => $country,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(CountryStoreRequest $request, Country $country)
     {
-        //
+        $country->update($request->validated());
+        Splade::toast('Country 정보를 수정했습니다.')->autoDismiss(3);
+
+        return redirect()->route('admin.countries.index');
     }
 
     /**
