@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Country;
 use App\Tables\Countries;
 use Illuminate\Http\Request;
+use ProtoneMedia\Splade\Facades\Splade;
+use App\Http\Requests\CountryStoreRequest;
 
 class CountryController extends Controller
 {
@@ -28,9 +31,12 @@ class CountryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CountryStoreRequest $request)
     {
-        //
+        Country::create($request->validated());
+        Splade::toast('새 Country를 저장했습니다.')->autoDismiss(3);
+
+        return redirect()->route('admin.countries.index');
     }
 
     /**
