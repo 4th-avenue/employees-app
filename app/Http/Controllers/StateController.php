@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\State;
 use App\Tables\States;
 use Illuminate\Http\Request;
 use App\Forms\CreateStateForm;
+use ProtoneMedia\Splade\Facades\Splade;
 
 class StateController extends Controller
 {
@@ -31,9 +33,13 @@ class StateController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, CreateStateForm $form)
     {
-        //
+        $data = $form->validate($request);
+        State::create($data);
+        Splade::toast('새 State를 저장했습니다.')->autoDismiss(3);
+
+        return redirect()->route('admin.states.index');
     }
 
     /**

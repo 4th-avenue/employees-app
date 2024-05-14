@@ -24,9 +24,11 @@ class CreateStateForm extends AbstractForm
         return [
             Select::make('country_id')
                 ->label('Choose a country')
-                ->options(Country::pluck('name', 'id')->toArray()),
+                ->options(Country::pluck('name', 'id')->toArray())
+                ->rules('required'),
             Text::make('name')
-                ->label('Name'),
+                ->label('Name')
+                ->rules('required|string|max:100'),
             Submit::make()
                 ->label(__('Save')),
         ];
