@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Tables\States;
 use Illuminate\Http\Request;
+use App\Forms\CreateStateForm;
 
 class StateController extends Controller
 {
@@ -22,7 +23,9 @@ class StateController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.states.create', [
+            'form' => CreateStateForm::class,      
+        ]);
     }
 
     /**
