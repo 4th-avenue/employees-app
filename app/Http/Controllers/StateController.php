@@ -6,6 +6,7 @@ use App\Models\State;
 use App\Tables\States;
 use Illuminate\Http\Request;
 use App\Forms\CreateStateForm;
+use App\Forms\UpdateStateForm;
 use ProtoneMedia\Splade\Facades\Splade;
 
 class StateController extends Controller
@@ -43,27 +44,27 @@ class StateController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(State $state)
     {
-        //
+        return view('admin.states.edit', [
+            'form' => UpdateStateForm::make()
+            ->action(route('admin.states.update', $state))
+            ->fill($state)
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, State $state, UpdateStateForm $form)
     {
-        //
+        $data = $form->validate($request);
+        $state->update($data);
+        Splade::toast('State 정보를 수정했습니다.')->autoDismiss(3);
+
+        return redirect()->route('admin.states.index');
     }
 
     /**
