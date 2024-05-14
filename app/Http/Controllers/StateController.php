@@ -70,8 +70,11 @@ class StateController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(State $state)
     {
-        //
+        $state->delete();
+        Splade::toast('State 정보를 삭제했습니다.')->autoDismiss(3);
+
+        return redirect()->back();
     }
 }
