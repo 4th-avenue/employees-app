@@ -94,8 +94,11 @@ class CityController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(City $city)
     {
-        //
+        $city->delete();
+        Splade::toast('City 정보를 삭제했습니다.')->autoDismiss(3);
+
+        return redirect()->back();
     }
 }
