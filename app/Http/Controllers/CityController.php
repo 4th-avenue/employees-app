@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\City;
 use App\Models\State;
 use App\Tables\Cities;
 use Illuminate\Http\Request;
 use ProtoneMedia\Splade\SpladeForm;
+use App\Http\Requests\CityStoreRequest;
+use ProtoneMedia\Splade\Facades\Splade;
 use ProtoneMedia\Splade\FormBuilder\Input;
 use ProtoneMedia\Splade\FormBuilder\Select;
 use ProtoneMedia\Splade\FormBuilder\Submit;
@@ -46,9 +49,12 @@ class CityController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CityStoreRequest $request)
     {
-        //
+        City::create($request->validated());
+        Splade::toast('새 City를 저장했습니다.')->autoDismiss(3);
+
+        return redirect()->route('admin.cities.index');
     }
 
     /**
