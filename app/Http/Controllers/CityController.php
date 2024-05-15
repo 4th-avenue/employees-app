@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\State;
 use App\Tables\Cities;
 use Illuminate\Http\Request;
+use ProtoneMedia\Splade\SpladeForm;
+use ProtoneMedia\Splade\FormBuilder\Input;
+use ProtoneMedia\Splade\FormBuilder\Select;
+use ProtoneMedia\Splade\FormBuilder\Submit;
 
 class CityController extends Controller
 {
@@ -22,7 +27,20 @@ class CityController extends Controller
      */
     public function create()
     {
-        //
+        $form = SpladeForm::make()
+            ->action(route('admin.cities.store'))
+            ->fields([
+                Input::make('name')->label('Name'),
+                Select::make('state_id')
+                    ->label('Choose a State')
+                    ->options(State::pluck('name', 'id')->toArray()),
+                Submit::make()->label('Save'),
+            ])
+            ->class('space-y-4');
+
+        return view('admin.cities.create', [
+            'form' => $form,
+        ]);
     }
 
     /**
