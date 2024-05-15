@@ -58,27 +58,37 @@ class CityController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(City $city)
     {
-        //
+        $form = SpladeForm::make()
+            ->action(route('admin.cities.update', $city))
+            ->fields([
+                Input::make('name')->label('Name'),
+                Select::make('state_id')
+                    ->label('Choose a State')
+                    ->options(State::pluck('name', 'id')->toArray()),
+                Submit::make()->label('Update'),
+            ])
+            ->fill($city)
+            ->class('space-y-4')
+            ->method('PUT');
+
+        return view('admin.cities.edit', [
+            'form' => $form,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(CityStoreRequest $request, City $city)
     {
-        //
+        $city->update($request->validated());
+        Splade::toast('City 정보를 수정했습니다.')->autoDismiss(3);
+
+        return redirect()->route('admin.cities.index');
     }
 
     /**
