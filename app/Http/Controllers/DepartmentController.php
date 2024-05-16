@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Tables\Departments;
 use Illuminate\Http\Request;
 
 class DepartmentController extends Controller
@@ -11,7 +12,9 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-        //
+        return view('admin.departments.index', [
+            'departments' => Departments::class
+        ]);
     }
 
     /**
