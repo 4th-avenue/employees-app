@@ -2,8 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\City;
+use App\Models\Employee;
 use App\Tables\Employees;
+use App\Models\Department;
 use Illuminate\Http\Request;
+use ProtoneMedia\Splade\SpladeForm;
+use ProtoneMedia\Splade\Facades\Splade;
+use ProtoneMedia\Splade\FormBuilder\Date;
+use ProtoneMedia\Splade\FormBuilder\Input;
+use App\Http\Requests\EmployeeStoreRequest;
+use ProtoneMedia\Splade\FormBuilder\Select;
+use ProtoneMedia\Splade\FormBuilder\Submit;
 
 class EmployeeController extends Controller
 {
@@ -22,15 +32,43 @@ class EmployeeController extends Controller
      */
     public function create()
     {
-        //
+        $form = SpladeForm::make()
+            ->action(route('admin.employees.store'))
+            ->fields([
+                Input::make('first_name')->label('First Name'),
+                Input::make('last_name')->label('Last Name'),
+                Input::make('middle_name')->label('Middle Name'),
+                Input::make('zip_code')->label('Zip Code'),
+                Select::make('city_id')
+                    ->label('Choose a City')
+                    ->options(City::pluck('name', 'id')->toArray()),
+                Select::make('department_id')
+                    ->label('Choose a Department')
+                    ->options(Department::pluck('name', 'id')->toArray()),
+                Date::make('birth_date')->label('Birthdate'),
+                Date::make('date_hired')->label('Date Hired'),
+                Submit::make()->label('Save'),
+            ])
+            ->class('space-y-4');
+
+        return view('admin.employees.create', [
+            'form' => $form,
+        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(EmployeeStoreRequest $request)
     {
-        //
+        $city = City::findOrFail($request->city_id);
+        Employee::create(array_merge($request->validated(), [
+            'country_id' => $city->state->country_id,
+            'state_id' => $city->state_id,
+        ]));
+        Splade::toast('새 직원을 저장했습니다.')->autoDismiss(3);
+
+        return redirect()->route('admin.employees.index');
     }
 
     /**
