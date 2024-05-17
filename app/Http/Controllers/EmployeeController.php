@@ -72,34 +72,59 @@ class EmployeeController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Employee $employee)
     {
-        //
+        $form = SpladeForm::make()
+            ->action(route('admin.employees.update', $employee))
+            ->fields([
+                Input::make('first_name')->label('First Name'),
+                Input::make('last_name')->label('Last Name'),
+                Input::make('middle_name')->label('Middle Name'),
+                Input::make('zip_code')->label('Zip Code'),
+                Select::make('city_id')
+                    ->label('Choose a City')
+                    ->options(City::pluck('name', 'id')->toArray()),
+                Select::make('department_id')
+                    ->label('Choose a Department')
+                    ->options(Department::pluck('name', 'id')->toArray()),
+                Date::make('birth_date')->label('Birthdate'),
+                Date::make('date_hired')->label('Date Hired'),
+                Submit::make()->label('Save'),
+            ])
+            ->fill($employee)
+            ->class('space-y-4')
+            ->method('PUT');
+
+        return view('admin.employees.edit', [
+            'form' => $form,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(EmployeeStoreRequest $request, Employee $employee)
     {
-        //
+        $city = City::findOrFail($request->city_id);
+        $employee->update(array_merge($request->validated(), [
+            'country_id' => $city->state->country_id,
+            'state_id' => $city->state_id,
+        ]));
+        Splade::toast('직원 정보를 수정했습니다.')->autoDismiss(3);
+
+        return redirect()->route('admin.employees.index');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Employee $employee)
     {
-        //
+        $employee->delete();
+        Splade::toast('직원 정보를 삭제했습니다.')->autoDismiss(3);
+
+        return redirect()->back();
     }
 }
