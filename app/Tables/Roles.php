@@ -4,8 +4,12 @@ namespace App\Tables;
 
 use App\Models\Role;
 use Illuminate\Http\Request;
-use ProtoneMedia\Splade\AbstractTable;
+use Illuminate\Support\Collection;
+use Spatie\Permission\Models\Role as ModelsRole;
 use ProtoneMedia\Splade\SpladeTable;
+use Spatie\QueryBuilder\QueryBuilder;
+use ProtoneMedia\Splade\AbstractTable;
+use Spatie\QueryBuilder\AllowedFilter;
 
 class Roles extends AbstractTable
 {
@@ -36,7 +40,19 @@ class Roles extends AbstractTable
      */
     public function for()
     {
-        return Role::query();
+        $globalSearch = AllowedFilter::callback('global', function ($query, $value) {
+            $query->where(function ($query) use ($value) {
+                Collection::wrap($value)->each(function ($value) use ($query) {
+                    $query
+                        ->orWhere('name', 'LIKE', "%{$value}%");
+                });
+            });
+        });
+
+        return QueryBuilder::for(ModelsRole::class)
+            ->defaultSort('id')
+            ->allowedSorts(['id', 'name'])
+            ->allowedFilters(['id', 'name', $globalSearch]);
     }
 
     /**
@@ -48,14 +64,10 @@ class Roles extends AbstractTable
     public function configure(SpladeTable $table)
     {
         $table
-            ->withGlobalSearch(columns: ['id'])
-            ->column('id', sortable: true);
-
-            // ->searchInput()
-            // ->selectFilter()
-            // ->withGlobalSearch()
-
-            // ->bulkAction()
-            // ->export()
+            ->withGlobalSearch(columns: ['name'])
+            ->column('id', sortable: true)
+            ->column('name', sortable: true)
+            ->column('action')
+            ->paginate(15);
     }
 }
