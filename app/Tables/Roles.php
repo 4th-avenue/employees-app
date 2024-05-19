@@ -49,7 +49,7 @@ class Roles extends AbstractTable
             });
         });
 
-        return QueryBuilder::for(ModelsRole::class)
+        return QueryBuilder::for(ModelsRole::where('name', '!=', 'admin'))
             ->defaultSort('id')
             ->allowedSorts(['id', 'name'])
             ->allowedFilters(['id', 'name', $globalSearch]);
