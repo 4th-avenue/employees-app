@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class RoleStoreRequest extends FormRequest
@@ -22,7 +23,7 @@ class RoleStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'unique:roles,name']
+            'name' => ['required', Rule::unique('roles', 'name')->ignore($this->route('role'))],
         ];
     }
 }

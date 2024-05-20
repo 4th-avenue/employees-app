@@ -42,4 +42,37 @@ class RoleController extends Controller
 
         return redirect()->route('admin.roles.index');
     }
+
+    public function edit(Role $role)
+    {
+        $form = SpladeForm::make()
+            ->action(route('admin.roles.update', $role))
+            ->fields([
+                Input::make('name')->label('Name'),
+                Submit::make()->label('Save'),
+            ])
+            ->fill($role)
+            ->class('space-y-4')
+            ->method('PUT');
+
+        return view('admin.roles.edit', [
+            'form' => $form,
+        ]);
+    }
+
+    public function update(RoleStoreRequest $request, Role $role)
+    {
+        $role->update($request->validated());
+        Splade::toast('역할을 수정했습니다.')->autoDismiss(3);
+
+        return redirect()->route('admin.roles.index');
+    }
+
+    public function destroy(Role $role)
+    {
+        $role->delete();
+        Splade::toast('역할을 삭제했습니다.')->autoDismiss(3);
+
+        return redirect()->back();
+    }
 }
