@@ -24,6 +24,7 @@ class PermissionStoreRequest extends FormRequest
     {
         return [
             'name' => ['required', Rule::unique('permissions', 'name')->ignore($this->route('permission'))],
+            'roles' => ['nullable']
         ];
     }
 }
