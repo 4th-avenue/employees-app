@@ -11,6 +11,8 @@
                         <x-splade-input name="email" label="Email address" class="mt-2" />
                         <x-splade-input type="password" name="password" label="Password" class="mt-2" />
                         <x-splade-input type="password" name="password_confirmation" label="Password Confirmation" class="mt-2" />
+                        <x-splade-select name="roles[]" label="Roles" :options="$roles" multiple relation choices class="mt-2" />
+                        <x-splade-select name="permissions[]" label="Permissions" :options="$permissions" multiple relation choices class="mt-2" />
                         <x-splade-submit class="mt-4" />
                     </x-splade-form>
                 </div>

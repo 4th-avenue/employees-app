@@ -9,6 +9,8 @@
                         <x-splade-input name="first_name" label="First name" class="mt-2" />
                         <x-splade-input name="last_name" label="Last name" class="mt-2" />
                         <x-splade-input name="email" label="Email address" class="mt-2" />
+                        <x-splade-select name="roles[]" label="Roles" :options="$roles" multiple relation choices class="mt-2" />
+                        <x-splade-select name="permissions[]" label="Permissions" :options="$permissions" multiple relation choices class="mt-2" />
                         <x-splade-submit class="mt-4" />
                     </x-splade-form>
                 </div>
