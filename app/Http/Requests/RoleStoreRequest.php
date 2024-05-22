@@ -24,6 +24,7 @@ class RoleStoreRequest extends FormRequest
     {
         return [
             'name' => ['required', Rule::unique('roles', 'name')->ignore($this->route('role'))],
+            'permissions' => ['nullable'],
         ];
     }
 }

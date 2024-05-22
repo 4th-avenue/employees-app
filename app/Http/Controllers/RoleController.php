@@ -5,11 +5,9 @@ namespace App\Http\Controllers;
 use App\Tables\Roles;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
-use ProtoneMedia\Splade\SpladeForm;
 use App\Http\Requests\RoleStoreRequest;
 use ProtoneMedia\Splade\Facades\Splade;
-use ProtoneMedia\Splade\FormBuilder\Input;
-use ProtoneMedia\Splade\FormBuilder\Submit;
+use Spatie\Permission\Models\Permission;
 
 class RoleController extends Controller
 {
@@ -22,22 +20,15 @@ class RoleController extends Controller
 
     public function create()
     {
-        $form = SpladeForm::make()
-            ->action(route('admin.roles.store'))
-            ->fields([
-                Input::make('name')->label('Name'),
-                Submit::make()->label('Save'),
-            ])
-            ->class('space-y-4');
-
         return view('admin.roles.create', [
-            'form' => $form,
+            'permissions' => Permission::pluck('name', 'name')->toArray()
         ]);
     }
 
     public function store(RoleStoreRequest $request)
     {
-        Role::create($request->validated());
+        $role = Role::create($request->validated());
+        $role->syncPermissions($request->permissions);
         Splade::toast('새 역할을 저장했습니다.')->autoDismiss(3);
 
         return redirect()->route('admin.roles.index');
@@ -45,24 +36,17 @@ class RoleController extends Controller
 
     public function edit(Role $role)
     {
-        $form = SpladeForm::make()
-            ->action(route('admin.roles.update', $role))
-            ->fields([
-                Input::make('name')->label('Name'),
-                Submit::make()->label('Save'),
-            ])
-            ->fill($role)
-            ->class('space-y-4')
-            ->method('PUT');
-
         return view('admin.roles.edit', [
-            'form' => $form,
+            'role' => $role,
+            'permissions' => Permission::pluck('name', 'id')->toArray()
         ]);
     }
 
     public function update(RoleStoreRequest $request, Role $role)
     {
+        $permissionNames = Permission::whereIn('id', $request->permissions)->pluck('name')->toArray();
         $role->update($request->validated());
+        $role->syncPermissions($permissionNames);
         Splade::toast('역할을 수정했습니다.')->autoDismiss(3);
 
         return redirect()->route('admin.roles.index');
