@@ -47,7 +47,7 @@ class PermissionController extends Controller
 
     public function update(PermissionStoreRequest $request, Permission $permission)
     {
-        $roleNames = Role::whereIn('id', $request->roles)->pluck('name')->toArray();
+        $roleNames = Role::whereIn('id', $request->roles ?? [])->pluck('name')->toArray();
         $permission->update($request->validated());
         $permission->syncRoles($roleNames);
         Splade::toast('권한을 수정했습니다.')->autoDismiss(3);
